@@ -1,26 +1,61 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { PaginationDTO } from 'src/common/dto/pagination.dto';
+import { QueryResponseDTO } from 'src/common/dto/query-response.dto';
+import { SortDTO } from 'src/common/dto/sort.dto';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+  ) {}
+
+  async findAll(
+    filter: User,
+    pagination: PaginationDTO,
+    sorts: SortDTO[],
+    totalCount?: boolean,
+  ): Promise<QueryResponseDTO<User>> {
+    const response = new QueryResponseDTO<User>();
+    const { size, page } = pagination;
+    const sort = Object.assign({});
+    sorts.map((s) => {
+      sort[s.property] = s.direction;
+    });
+    if (totalCount) {
+      response.totalCount = await this.userModel.countDocuments({ ...filter });
+    }
+
+    const data = await this.userModel
+      .find({ ...filter })
+      .sort(sort)
+      .skip(page)
+      .limit(size)
+      .exec();
+
+    response.data = data || [];
+
+    response.success = data ? true : false;
+
+    return response;
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findById(id: string) {
+    return await this.userModel.findById(id).exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(filter: Partial<User>) {
+    return await this.userModel.findOne({ ...filter }).exec();
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async create(createUserDto: Partial<User>) {
+    const user = new this.userModel(createUserDto);
+    return await user.save();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: string) {
+    return await this.userModel.findOneAndDelete({ _id: id });
   }
 }

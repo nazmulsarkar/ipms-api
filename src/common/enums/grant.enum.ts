@@ -1,0 +1,5 @@
+export enum Grant {
+  SITE_AUTH = 'SITE_AUTH',
+  SOCIAL_AUTH = 'SOCIAL_AUTH',
+  REFRESH_TOKEN = 'REFRESH_TOKEN',
+}

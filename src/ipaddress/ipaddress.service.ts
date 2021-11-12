@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateIpaddressInput } from './dto/create-ipaddress.input';
-import { UpdateIpaddressInput } from './dto/update-ipaddress.input';
+import { CreateIpaddressDto } from './dto/create-ipaddress.dto';
+import { UpdateIpaddressDto } from './dto/update-ipaddress.dto';
 
 @Injectable()
 export class IpaddressService {
-  create(createIpaddressInput: CreateIpaddressInput) {
+  create(createIpaddressDto: CreateIpaddressDto) {
     return 'This action adds a new ipaddress';
   }
 
@@ -16,7 +16,7 @@ export class IpaddressService {
     return `This action returns a #${id} ipaddress`;
   }
 
-  update(id: number, updateIpaddressInput: UpdateIpaddressInput) {
+  update(id: number, updateIpaddressDto: UpdateIpaddressDto) {
     return `This action updates a #${id} ipaddress`;
   }
 

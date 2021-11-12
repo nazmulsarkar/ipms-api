@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateLogInput } from './dto/create-log.input';
-import { UpdateLogInput } from './dto/update-log.input';
+import { CreateLogDto } from './dto/create-log.dto';
+import { UpdateLogDto } from './dto/update-log.dto';
 
 @Injectable()
 export class LogService {
-  create(createLogInput: CreateLogInput) {
+  create(createLogDto: CreateLogDto) {
     return 'This action adds a new log';
   }
 
@@ -16,7 +16,7 @@ export class LogService {
     return `This action returns a #${id} log`;
   }
 
-  update(id: number, updateLogInput: UpdateLogInput) {
+  update(id: number, updateLogDto: UpdateLogDto) {
     return `This action updates a #${id} log`;
   }
 

@@ -1,8 +1,19 @@
 import { Module } from '@nestjs/common';
 import { IpaddressService } from './ipaddress.service';
-import { IpaddressResolver } from './ipaddress.resolver';
+import { IpaddressController } from './ipaddress.controller';
+import { MongooseModule } from '@nestjs/mongoose';
+import { Ipaddress, IpaddressSchema } from './entities/ipaddress.entity';
 
 @Module({
-  providers: [IpaddressResolver, IpaddressService]
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Ipaddress.name,
+        schema: IpaddressSchema,
+      },
+    ]),
+  ],
+  controllers: [IpaddressController],
+  providers: [IpaddressService],
 })
 export class IpaddressModule {}
