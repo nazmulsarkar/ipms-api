@@ -5,12 +5,14 @@ import {
   UseFilters,
   UseGuards,
   Response,
-  Request,
-  HttpStatus,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { MongooseErrorFilter } from 'src/common/filters/mongoose-error.filter';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { CurrentUser } from '../common/decorators/user.decorator';
+import { MongooseErrorFilter } from '../common/filters/mongoose-error.filter';
+import { User } from '../user/entities/user.entity';
 import { AuthService } from './auth.service';
+import { LoginResponseDTO } from './dto/login-response.dto';
+import { LoginDTO } from './dto/login.dto';
 import { SignupDTO } from './dto/signup.dto';
 
 @Controller('auth')
@@ -23,9 +25,17 @@ export class AuthController {
     return await this.authService.register(signupDTO);
   }
 
+  @Post('login')
+  async login(
+    @Body() creds: LoginDTO,
+    @Response() res: any,
+  ): Promise<LoginResponseDTO> {
+    return res.status(200).json(await this.authService.login(creds));
+  }
+
   @Post('me')
-  @UseGuards(AuthGuard('jwt'))
-  async getUserMe(@Request() req: any, @Response() res: any): Promise<any> {
-    return res.status(HttpStatus.OK).json(req.user);
+  @UseGuards(JwtAuthGuard)
+  async getUserMe(@CurrentUser() user: User): Promise<any> {
+    return user;
   }
 }

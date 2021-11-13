@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   UseGuards,
   UseFilters,
   Query,
@@ -29,11 +28,11 @@ export class IpaddressController {
   @UseFilters(MongooseErrorFilter)
   async create(
     @CurrentUser() user: User,
-    @Body() createIpaddressDto: CreateIpaddressDto,
+    @Body() createModel: CreateIpaddressDto,
   ) {
     return await this.ipaddressService.create({
       createdBy: user._id,
-      ...createIpaddressDto,
+      ...createModel,
     });
   }
 
@@ -50,11 +49,11 @@ export class IpaddressController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateIpaddressDto: UpdateIpaddressDto,
+    @Body() updateModel: UpdateIpaddressDto,
   ) {
     return await this.ipaddressService.update(
       { _id: new Types.ObjectId(id) },
-      updateIpaddressDto,
+      updateModel,
     );
   }
 }

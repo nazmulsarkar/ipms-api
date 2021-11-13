@@ -16,5 +16,5 @@ export class SignupDTO {
   @IsNotEmpty()
   @IsString()
   @IsAlphanumeric()
-  password?: string;
+  password: string;
 }

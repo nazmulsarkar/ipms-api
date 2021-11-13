@@ -50,7 +50,7 @@ export class AuthService {
     try {
       const user = new User();
       const createUser = { ...user, ...signupDTO };
-      createUser.password = await this.getHash(process.env.DEFAULT_PASS);
+      createUser.password = await this.getHash(signupDTO.password);
       const createdUser = await this.userService.create(createUser);
       createdUser.password = undefined;
       return createdUser;
@@ -61,8 +61,13 @@ export class AuthService {
 
   private async getToken(user: User): Promise<string> {
     try {
-      const { _id, email } = user;
-      return await this.jwtService.signAsync({ _id, email });
+      const { _id, email, firstName, lastName } = user;
+      return await this.jwtService.signAsync({
+        _id,
+        email,
+        firstName,
+        lastName,
+      });
     } catch (err) {
       console.error(err);
     }
@@ -71,10 +76,6 @@ export class AuthService {
   private async getHash(password: string | undefined): Promise<string> {
     return argon2.hash(password);
   }
-
-  private getDisplayName = (f: string, l: string) => {
-    return f + ' ' + l;
-  };
 
   private async compareHash(
     password: string | undefined,

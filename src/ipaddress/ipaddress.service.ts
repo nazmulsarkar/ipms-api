@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { QueryResponseDTO } from 'src/common/dto/query-response.dto';
+import { CreateIpaddress } from './dto/create-ipaddress.dto';
 import {
   FilteripaddressDto,
   QueryIpaddressDto,
@@ -53,8 +54,8 @@ export class IpaddressService {
     return await this.ipaddressModel.findOne({ ...filter }).exec();
   }
 
-  async create(createIpaddressDto: Partial<Ipaddress>) {
-    const user = new this.ipaddressModel(createIpaddressDto);
+  async create(createModel: CreateIpaddress) {
+    const user = new this.ipaddressModel(createModel);
     return await user.save();
   }
 
