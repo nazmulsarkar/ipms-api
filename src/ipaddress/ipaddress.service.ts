@@ -1,13 +1,15 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { QueryResponseDTO } from 'src/common/dto/query-response.dto';
+import { QueryResponseDTO } from '../common/dto/query-response.dto';
+import { EntityEnum } from '../common/enums/entity.enum';
+import { LogService } from '../log/log.service';
 import { CreateIpaddress } from './dto/create-ipaddress.dto';
 import {
-  FilteripaddressDto,
+  FilterIpaddressDto,
   QueryIpaddressDto,
 } from './dto/filter-ipaddress.dto';
-import { UpdateIpaddressDto } from './dto/update-ipaddress.dto';
+import { UpdateIpaddress } from './dto/update-ipaddress.dto';
 import { Ipaddress } from './entities/ipaddress.entity';
 
 @Injectable()
@@ -15,15 +17,20 @@ export class IpaddressService {
   constructor(
     @InjectModel(Ipaddress.name)
     private readonly ipaddressModel: Model<Ipaddress>,
+    private readonly logService: LogService,
   ) {}
 
   async findAll(queryParams: QueryIpaddressDto) {
     const response = new QueryResponseDTO<Ipaddress>();
+
     const { pageSize, pageNumber, ...rest } = queryParams;
+
     const filter = rest || {};
     const filterQry = this.buildQuery(filter);
+
     const size = pageSize || 100;
     const page = pageNumber - 1 || 0;
+
     const sortsQry = [{ property: 'createdAt', direction: -1 }];
     const sort = {};
     sortsQry.map((s) => {
@@ -55,11 +62,16 @@ export class IpaddressService {
   }
 
   async create(createModel: CreateIpaddress) {
-    const user = new this.ipaddressModel(createModel);
-    return await user.save();
+    const ipAddress = new this.ipaddressModel(createModel);
+    const createdIpaddress = ipAddress.save();
+
+    if (createdIpaddress) {
+      await this.createdIpaddressEventLog(ipAddress);
+    }
+    return createdIpaddress;
   }
 
-  async update(filter: FilteripaddressDto, updateModel: UpdateIpaddressDto) {
+  async update(filter: FilterIpaddressDto, updateModel: UpdateIpaddress) {
     const res = await this.ipaddressModel
       .findOneAndUpdate({ ...filter }, updateModel, { new: true })
       .exec();
@@ -68,10 +80,30 @@ export class IpaddressService {
       throw new BadRequestException();
     }
 
+    await this.updatedIpaddressEventLog(res);
+
     return res;
   }
 
-  buildQuery(filter: FilteripaddressDto) {
+  buildQuery(filter: FilterIpaddressDto) {
     return filter;
+  }
+
+  async createdIpaddressEventLog(data: Ipaddress) {
+    const log = {
+      message: `A new ip address has been created`,
+      entity: data._id,
+      onModel: EntityEnum.IpaddressEntity,
+    };
+    return this.logService.create(log);
+  }
+
+  async updatedIpaddressEventLog(data: Ipaddress) {
+    const log = {
+      message: `An ip address has been changed`,
+      entity: data._id,
+      onModel: EntityEnum.IpaddressEntity,
+    };
+    return this.logService.create(log);
   }
 }

@@ -1,20 +1,25 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, Schema as MongooseSchema } from 'mongoose';
-import * as uniqueValidator from 'mongoose-unique-validator';
-import { User } from 'src/user/entities/user.entity';
+import { EntityEnum } from '../../common/enums/entity.enum';
+import { User } from '../../user/entities/user.entity';
 
 @Schema({ timestamps: true })
 export class Log {
   @Prop({
-    unique: true,
     required: true,
   })
   message: string;
 
   @Prop({
     required: true,
+    type: MongooseSchema.Types.ObjectId,
+    refPath: 'onModel',
   })
-  entity: string;
+  entity: Types.ObjectId;
+
+  // Ass well as in the EntityEnum
+  @Prop(EntityEnum)
+  onModel: EntityEnum;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
@@ -36,4 +41,3 @@ export class Log {
 
 export type LogDocument = Log & Document;
 export const LogSchema = SchemaFactory.createForClass(Log);
-LogSchema.plugin(uniqueValidator);

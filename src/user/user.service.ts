@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PaginationDTO } from 'src/common/dto/pagination.dto';
-import { QueryResponseDTO } from 'src/common/dto/query-response.dto';
-import { SortDTO } from 'src/common/dto/sort.dto';
+import { PaginationDTO } from '../common/dto/pagination.dto';
+import { QueryResponseDTO } from '../common/dto/query-response.dto';
+import { SortDTO } from '../common/dto/sort.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()

@@ -7,6 +7,8 @@ import { SignupDTO } from './dto/signup.dto';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
 import { Grant } from '../common/enums/grant.enum';
+import { EntityEnum } from '../common/enums/entity.enum';
+import { LogService } from '../log/log.service';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +17,7 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly logService: LogService,
   ) {}
 
   async login(credentials: LoginDTO): Promise<TokenDTO> {
@@ -36,6 +39,10 @@ export class AuthService {
 
       const token = await this.getToken(user).then((r) => r);
 
+      if (token) {
+        await this.loginUserEventLog(user);
+      }
+
       return {
         accessToken: token,
         refreshToken: '',
@@ -53,6 +60,11 @@ export class AuthService {
       createUser.password = await this.getHash(signupDTO.password);
       const createdUser = await this.userService.create(createUser);
       createdUser.password = undefined;
+
+      if (createdUser) {
+        await this.createdUserEventLog(createdUser);
+      }
+      return createdUser;
       return createdUser;
     } catch (err) {
       throw new BadRequestException(`${err.message}`);
@@ -94,5 +106,23 @@ export class AuthService {
       this.logger.log('argon2 error');
       return false;
     }
+  }
+
+  async createdUserEventLog(data: User) {
+    const log = {
+      message: `A new user has been created`,
+      entity: data._id,
+      onModel: EntityEnum.UserEntity,
+    };
+    return this.logService.create(log);
+  }
+
+  async loginUserEventLog(data: User) {
+    const log = {
+      message: `A user has been logged in`,
+      entity: data._id,
+      onModel: EntityEnum.UserEntity,
+    };
+    return this.logService.create(log);
   }
 }

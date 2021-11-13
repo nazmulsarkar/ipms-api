@@ -2,9 +2,9 @@ import { IntersectionType, PartialType } from '@nestjs/mapped-types';
 import { IsOptional } from 'class-validator';
 import { Types } from 'mongoose';
 import { PaginationDTO } from '../../common/dto/pagination.dto';
-import { BaseIpaddressDto } from './base-ipaddress.dto';
+import { BaseLogDto } from './base-log.dto';
 
-export class FilterIpaddressDto extends PartialType(BaseIpaddressDto) {
+export class FilterLogDto extends PartialType(BaseLogDto) {
   @IsOptional()
   _id?: Types.ObjectId;
 
@@ -12,7 +12,7 @@ export class FilterIpaddressDto extends PartialType(BaseIpaddressDto) {
   createdBy?: Types.ObjectId;
 }
 
-export class QueryIpaddressDto extends IntersectionType(
+export class QueryLogDto extends IntersectionType(
   PaginationDTO,
-  FilterIpaddressDto,
+  FilterLogDto,
 ) {}

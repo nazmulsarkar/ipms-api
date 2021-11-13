@@ -49,11 +49,15 @@ export class IpaddressController {
   @Patch(':id')
   async update(
     @Param('id') id: string,
+    @CurrentUser() user: User,
     @Body() updateModel: UpdateIpaddressDto,
   ) {
     return await this.ipaddressService.update(
       { _id: new Types.ObjectId(id) },
-      updateModel,
+      {
+        updatedBy: user._id,
+        ...updateModel,
+      },
     );
   }
 }

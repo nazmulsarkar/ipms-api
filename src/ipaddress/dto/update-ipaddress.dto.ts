@@ -1,4 +1,10 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateIpaddressDto } from './create-ipaddress.dto';
+import { IsNotEmpty } from 'class-validator';
+import { Types } from 'mongoose';
+import { BaseIpaddressDto } from './base-ipaddress.dto';
 
-export class UpdateIpaddressDto extends PartialType(CreateIpaddressDto) {}
+export class UpdateIpaddressDto extends PartialType(BaseIpaddressDto) {}
+export class UpdateIpaddress extends UpdateIpaddressDto {
+  @IsNotEmpty()
+  updatedBy: Types.ObjectId;
+}
