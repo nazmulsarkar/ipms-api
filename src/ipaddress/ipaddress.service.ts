@@ -1,26 +1,76 @@
-import { Injectable } from '@nestjs/common';
-import { CreateIpaddressDto } from './dto/create-ipaddress.dto';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { QueryResponseDTO } from 'src/common/dto/query-response.dto';
+import {
+  FilteripaddressDto,
+  QueryIpaddressDto,
+} from './dto/filter-ipaddress.dto';
 import { UpdateIpaddressDto } from './dto/update-ipaddress.dto';
+import { Ipaddress } from './entities/ipaddress.entity';
 
 @Injectable()
 export class IpaddressService {
-  create(createIpaddressDto: CreateIpaddressDto) {
-    return 'This action adds a new ipaddress';
+  constructor(
+    @InjectModel(Ipaddress.name)
+    private readonly ipaddressModel: Model<Ipaddress>,
+  ) {}
+
+  async findAll(queryParams: QueryIpaddressDto) {
+    const response = new QueryResponseDTO<Ipaddress>();
+    const { pageSize, pageNumber, ...rest } = queryParams;
+    const filter = rest || {};
+    const filterQry = this.buildQuery(filter);
+    const size = pageSize || 100;
+    const page = pageNumber - 1 || 0;
+    const sortsQry = [{ property: 'createdAt', direction: -1 }];
+    const sort = {};
+    sortsQry.map((s) => {
+      sort[s.property] = s.direction;
+    });
+
+    response.totalCount = await this.ipaddressModel.countDocuments({
+      ...filterQry,
+    });
+
+    const list = await this.ipaddressModel
+      .find({ ...filterQry })
+      .sort(sort)
+      .skip(page)
+      .limit(size)
+      .exec();
+    response.data = list || [];
+    response.success = list ? true : false;
+
+    return response;
   }
 
-  findAll() {
-    return `This action returns all ipaddress`;
+  async findById(id: string) {
+    return await this.ipaddressModel.findById(id).exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ipaddress`;
+  async findOne(filter: Partial<Ipaddress>) {
+    return await this.ipaddressModel.findOne({ ...filter }).exec();
   }
 
-  update(id: number, updateIpaddressDto: UpdateIpaddressDto) {
-    return `This action updates a #${id} ipaddress`;
+  async create(createIpaddressDto: Partial<Ipaddress>) {
+    const user = new this.ipaddressModel(createIpaddressDto);
+    return await user.save();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} ipaddress`;
+  async update(filter: FilteripaddressDto, updateModel: UpdateIpaddressDto) {
+    const res = await this.ipaddressModel
+      .findOneAndUpdate({ ...filter }, updateModel, { new: true })
+      .exec();
+
+    if (!res) {
+      throw new BadRequestException();
+    }
+
+    return res;
+  }
+
+  buildQuery(filter: FilteripaddressDto) {
+    return filter;
   }
 }

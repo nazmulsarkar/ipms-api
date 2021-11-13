@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, Schema as MongooseSchema } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
-import { Ipaddress } from 'src/ipaddress/entities/ipaddress.entity';
-import { User } from 'src/user/entities/user.entity';
+import { Ipaddress } from '../../ipaddress/entities/ipaddress.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Schema({ timestamps: true })
 export class Comment {
@@ -17,10 +17,16 @@ export class Comment {
   })
   ipaddressId: Types.ObjectId;
 
-  @Prop()
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: User.name,
+  })
   createdBy: Types.ObjectId | User;
 
-  @Prop()
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: User.name,
+  })
   updatedBy: Types.ObjectId | User;
 
   // only read purpose, type safety

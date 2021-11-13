@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { Types, Schema as MongooseSchema } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
 import { User } from 'src/user/entities/user.entity';
 
@@ -16,10 +16,16 @@ export class Log {
   })
   entity: string;
 
-  @Prop()
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: User.name,
+  })
   createdBy: Types.ObjectId | User;
 
-  @Prop()
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: User.name,
+  })
   updatedBy: Types.ObjectId | User;
 
   // only read purpose, type safety

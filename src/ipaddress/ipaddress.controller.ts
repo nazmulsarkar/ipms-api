@@ -1,34 +1,60 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  UseFilters,
+  Query,
+} from '@nestjs/common';
 import { IpaddressService } from './ipaddress.service';
 import { CreateIpaddressDto } from './dto/create-ipaddress.dto';
 import { UpdateIpaddressDto } from './dto/update-ipaddress.dto';
+import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
+import { MongooseErrorFilter } from '../common/filters/mongoose-error.filter';
+import { CurrentUser } from '../common/decorators/user.decorator';
+import { User } from '../user/entities/user.entity';
+import { QueryIpaddressDto } from './dto/filter-ipaddress.dto';
+import { Types } from 'mongoose';
 
-@Controller('ipaddress')
+@Controller('ipaddresses')
+@UseGuards(JwtAuthGuard)
 export class IpaddressController {
   constructor(private readonly ipaddressService: IpaddressService) {}
 
   @Post()
-  create(@Body() createIpaddressDto: CreateIpaddressDto) {
-    return this.ipaddressService.create(createIpaddressDto);
+  @UseFilters(MongooseErrorFilter)
+  async create(
+    @CurrentUser() user: User,
+    @Body() createIpaddressDto: CreateIpaddressDto,
+  ) {
+    return await this.ipaddressService.create({
+      createdBy: user._id,
+      ...createIpaddressDto,
+    });
   }
 
   @Get()
-  findAll() {
-    return this.ipaddressService.findAll();
+  async findAll(@Query() queryParams: QueryIpaddressDto) {
+    return await this.ipaddressService.findAll(queryParams);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ipaddressService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.ipaddressService.findById(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateIpaddressDto: UpdateIpaddressDto) {
-    return this.ipaddressService.update(+id, updateIpaddressDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ipaddressService.remove(+id);
+  async update(
+    @Param('id') id: string,
+    @Body() updateIpaddressDto: UpdateIpaddressDto,
+  ) {
+    return await this.ipaddressService.update(
+      { _id: new Types.ObjectId(id) },
+      updateIpaddressDto,
+    );
   }
 }

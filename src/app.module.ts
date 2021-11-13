@@ -14,11 +14,7 @@ import { IpaddressModule } from './ipaddress/ipaddress.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    MongooseModule.forRoot(`${process.env.DB_URL}`, {
-      useNewUrlParser: true,
-      useFindAndModify: false,
-      useCreateIndex: true,
-    }),
+    MongooseModule.forRoot(`${process.env.DB_URL}`),
     AuthModule,
     UserModule,
     IpaddressModule,

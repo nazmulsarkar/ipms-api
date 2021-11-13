@@ -19,6 +19,5 @@ async function bootstrap() {
 
   await app.listen(parseInt(process.env.PORT) || 5000);
   console.log(`Application is running on: ${await app.getUrl()}`);
-  await app.listen(3000);
 }
 bootstrap();

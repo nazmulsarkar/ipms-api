@@ -1,10 +1,13 @@
+import { Ip } from '@nestjs/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { Types, Schema as MongooseSchema } from 'mongoose';
 import * as uniqueValidator from 'mongoose-unique-validator';
+import { User } from '../../user/entities/user.entity';
 
 @Schema({ timestamps: true })
 export class Ipaddress {
   @Prop({
+    type: Ip,
     unique: true,
     required: true,
   })
@@ -14,6 +17,18 @@ export class Ipaddress {
     required: true,
   })
   label: string;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: User.name,
+  })
+  createdBy: Types.ObjectId | User;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: User.name,
+  })
+  updatedBy: Types.ObjectId | User;
 
   // only read purpose, type safety
   _id: Types.ObjectId;

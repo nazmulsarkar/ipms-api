@@ -4,10 +4,9 @@ import * as argon2 from 'argon2';
 import { LoginDTO } from './dto/login.dto';
 import { TokenDTO } from './dto/token.dto';
 import { SignupDTO } from './dto/signup.dto';
-import { ConfigService } from '@nestjs/config';
 import { UserService } from '../user/user.service';
-import { User } from 'src/user/entities/user.entity';
-import { Grant } from 'src/common/enums/grant.enum';
+import { User } from '../user/entities/user.entity';
+import { Grant } from '../common/enums/grant.enum';
 
 @Injectable()
 export class AuthService {
@@ -15,7 +14,6 @@ export class AuthService {
 
   constructor(
     private readonly userService: UserService,
-    private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
 

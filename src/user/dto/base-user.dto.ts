@@ -2,11 +2,12 @@ import {
   IsAlphanumeric,
   IsEmail,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MinLength,
 } from 'class-validator';
 
-export class LoginDTO {
+export class BaseUserDto {
   @IsNotEmpty()
   @IsString()
   @IsEmail()
@@ -17,4 +18,12 @@ export class LoginDTO {
   @IsString()
   @IsAlphanumeric()
   password: string;
+
+  @IsOptional()
+  @IsString()
+  firstName?: string;
+
+  @IsOptional()
+  @IsString()
+  lastName: string;
 }

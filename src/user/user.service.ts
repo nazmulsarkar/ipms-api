@@ -19,7 +19,10 @@ export class UserService {
     totalCount?: boolean,
   ): Promise<QueryResponseDTO<User>> {
     const response = new QueryResponseDTO<User>();
-    const { size, page } = pagination;
+    const { pageNumber, pageSize } = pagination;
+    const size = pageSize || 100;
+    const page = pageNumber - 1 || 0;
+
     const sort = Object.assign({});
     sorts.map((s) => {
       sort[s.property] = s.direction;

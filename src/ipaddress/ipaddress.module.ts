@@ -3,6 +3,7 @@ import { IpaddressService } from './ipaddress.service';
 import { IpaddressController } from './ipaddress.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Ipaddress, IpaddressSchema } from './entities/ipaddress.entity';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [

@@ -10,14 +10,10 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop({
-    required: true,
-  })
+  @Prop()
   firstName: string;
 
-  @Prop({
-    required: true,
-  })
+  @Prop()
   lastName: string;
 
   // only read purpose, type safety
