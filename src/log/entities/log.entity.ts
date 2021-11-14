@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types, Schema as MongooseSchema } from 'mongoose';
+import { LogEventEnum } from '../../common/enums/log-event.enum';
 import { EntityEnum } from '../../common/enums/entity.enum';
 import { User } from '../../user/entities/user.entity';
 
@@ -12,6 +13,11 @@ export class Log {
 
   @Prop({
     required: true,
+  })
+  data: string;
+
+  @Prop({
+    required: true,
     type: MongooseSchema.Types.ObjectId,
     refPath: 'onModel',
   })
@@ -20,6 +26,10 @@ export class Log {
   // Ass well as in the EntityEnum
   @Prop(EntityEnum)
   onModel: EntityEnum;
+
+  // Ass well as in the EntityEnum
+  @Prop(LogEventEnum)
+  eventType: LogEventEnum;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,

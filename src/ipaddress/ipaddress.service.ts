@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { LogEventEnum } from 'src/common/enums/log-event.enum';
 import { QueryResponseDTO } from '../common/dto/query-response.dto';
 import { EntityEnum } from '../common/enums/entity.enum';
 import { LogService } from '../log/log.service';
@@ -94,6 +95,8 @@ export class IpaddressService {
       message: `A new ip address has been created`,
       entity: data._id,
       onModel: EntityEnum.IpaddressEntity,
+      data: data.toString(),
+      eventType: LogEventEnum.CREATED,
     };
     return this.logService.create(log);
   }
@@ -103,6 +106,8 @@ export class IpaddressService {
       message: `An ip address has been changed`,
       entity: data._id,
       onModel: EntityEnum.IpaddressEntity,
+      data: data.toString(),
+      eventType: LogEventEnum.CHNAGED,
     };
     return this.logService.create(log);
   }

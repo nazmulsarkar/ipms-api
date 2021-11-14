@@ -9,6 +9,7 @@ import { User } from '../user/entities/user.entity';
 import { Grant } from '../common/enums/grant.enum';
 import { EntityEnum } from '../common/enums/entity.enum';
 import { LogService } from '../log/log.service';
+import { LogEventEnum } from 'src/common/enums/log-event.enum';
 
 @Injectable()
 export class AuthService {
@@ -113,6 +114,8 @@ export class AuthService {
       message: `A new user has been created`,
       entity: data._id,
       onModel: EntityEnum.UserEntity,
+      data: data.toString(),
+      eventType: LogEventEnum.CREATED,
     };
     return this.logService.create(log);
   }
@@ -122,6 +125,8 @@ export class AuthService {
       message: `A user has been logged in`,
       entity: data._id,
       onModel: EntityEnum.UserEntity,
+      data: data.toString(),
+      eventType: LogEventEnum.LOGGEDIN,
     };
     return this.logService.create(log);
   }
