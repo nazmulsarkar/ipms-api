@@ -8,6 +8,7 @@ import {
   UseGuards,
   UseFilters,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { IpaddressService } from './ipaddress.service';
 import { CreateIpaddressDto } from './dto/create-ipaddress.dto';
@@ -43,7 +44,11 @@ export class IpaddressController {
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return await this.ipaddressService.findById(id);
+    try {
+      return await this.ipaddressService.findById(id);
+    } catch (err) {
+      throw new BadRequestException(err.message.toString());
+    }
   }
 
   @Patch(':id')

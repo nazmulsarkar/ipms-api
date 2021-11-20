@@ -5,6 +5,7 @@ import {
   UseFilters,
   UseGuards,
   Response,
+  Get,
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../common/guards/jwt-auth.guard';
 import { CurrentUser } from '../common/decorators/user.decorator';
@@ -33,7 +34,7 @@ export class AuthController {
     return res.status(200).json(await this.authService.login(creds));
   }
 
-  @Post('me')
+  @Get('me')
   @UseGuards(JwtAuthGuard)
   async getUserMe(@CurrentUser() user: User): Promise<any> {
     return user;

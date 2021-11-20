@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { LogEventEnum } from 'src/common/enums/log-event.enum';
 import { QueryResponseDTO } from '../common/dto/query-response.dto';
 import { EntityEnum } from '../common/enums/entity.enum';
